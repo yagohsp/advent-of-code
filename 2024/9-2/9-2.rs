@@ -1,4 +1,4 @@
-use std::{collections::HashSet, fs};
+use std::fs;
 
 const OFFSETS: [(isize, isize); 4] = [(-1, 0), (0, -1), (0, 1), (1, 0)];
 
@@ -29,38 +29,26 @@ fn look_around(
     founds
 }
 
-fn remove_duplicates<T: std::hash::Hash + Eq + Clone>(vec: Vec<T>) -> Vec<T> {
-    let set: HashSet<T> = vec.into_iter().collect(); // Convert to HashSet to remove duplicates
-    set.into_iter().collect() // Convert back to Vec
-}
-
-fn count_paths(
-    map: &Vec<Vec<char>>,
-    location: &(usize, usize),
-    target: char,
-) -> Vec<(usize, usize)> {
+fn count_paths(map: &Vec<Vec<char>>, location: &(usize, usize), target: char) -> usize {
     let nexts = look_around(map, location, target);
 
     if target == '9' {
-        return nexts;
+        return nexts.len();
     }
 
     let next_target: u32 = target.to_digit(10).unwrap() + 1;
     let next_target = (next_target as u8 + b'0') as char;
 
-    let mut finals: Vec<(usize, usize)> = Vec::new();
+    let mut count = 0;
     for next in nexts {
-        let founds = count_paths(map, &next, next_target);
-        for found in founds {
-            finals.push(found);
-        }
+        count += count_paths(map, &next, next_target);
     }
 
-    finals
+    count
 }
 
 fn main() {
-    let file = fs::read_to_string("9-1/input.txt").expect("");
+    let file = fs::read_to_string("9-2/input.txt").expect("");
     let lines = file.lines();
 
     let mut map: Vec<Vec<char>> = Vec::new();
@@ -82,11 +70,11 @@ fn main() {
     let mut count = 0;
     for trail in trails {
         // println!("trail - {:?}", trail);
-        let paths = count_paths(&map, &trail, '1');
-        let uniques = remove_duplicates(paths);
-        count += uniques.len();
-        // println!("count: {:?}", uniques);
+        let this_count = count_paths(&map, &trail, '1');
+        // println!("count: {}", this_count);
         // println!("");
+
+        count += this_count;
     }
     println!("{}", count);
 }

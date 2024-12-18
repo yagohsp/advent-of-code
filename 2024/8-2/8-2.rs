@@ -4,12 +4,12 @@ fn print_all(map: &Vec<Vec<char>>) {
     let mut count = 0;
     for row in map.iter() {
         for c in row.iter() {
-            print!("{}", c);
+            // print!("{}", c);
             if *c != '.' {
                 count += 1;
             }
         }
-        println!("");
+        // println!("");
     }
     println!("{}", count);
 }
@@ -42,7 +42,7 @@ fn in_bounds(point: (isize, isize), max_len: usize) -> bool {
 }
 
 fn main() {
-    let file = fs::read_to_string("8-2/input-meu.txt").expect("");
+    let file = fs::read_to_string("8-2/input.txt").expect("");
     let lines = file.lines();
 
     let mut map: Vec<Vec<char>> = lines.map(|line| line.chars().collect()).collect();
@@ -69,7 +69,6 @@ fn main() {
                 let t2 = b;
                 let t2 = (t2.0 as isize, t2.1 as isize);
 
-                println!("{:?} {:?}", t1, t2);
                 set_points(t1, t2, &mut map);
             }
         }
