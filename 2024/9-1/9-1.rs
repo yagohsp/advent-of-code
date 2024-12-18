@@ -31,8 +31,8 @@ fn look_around(
 }
 
 fn remove_duplicates<T: std::hash::Hash + Eq + Clone>(vec: Vec<T>) -> Vec<T> {
-    let set: HashSet<T> = vec.into_iter().collect(); // Convert to HashSet to remove duplicates
-    set.into_iter().collect() // Convert back to Vec
+    let set: HashSet<T> = vec.into_iter().collect();
+    set.into_iter().collect()
 }
 
 fn count_paths(

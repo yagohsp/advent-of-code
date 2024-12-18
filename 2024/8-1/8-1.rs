@@ -4,12 +4,12 @@ fn print_all(map: &Vec<Vec<char>>) {
     let mut count = 0;
     for row in map.iter() {
         for c in row.iter() {
-            print!("{}", c);
             if *c == '#' {
                 count += 1;
             }
+            // print!("{}", c);
         }
-        println!("");
+        // println!("");
     }
     println!("{}", count);
 }

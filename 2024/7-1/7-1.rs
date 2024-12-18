@@ -1,7 +1,7 @@
 use std::fs;
 
 fn main() {
-    let file = fs::read_to_string("7-1/input-teste.txt").expect("");
+    let file = fs::read_to_string("7-1/input.txt").expect("");
     let lines = file.lines();
 
     let mut all_values: Vec<(usize, Vec<usize>)> = Vec::new();
@@ -26,16 +26,18 @@ fn main() {
     for (total, values) in all_values {
         let decimal_num = values.len() - 1;
 
-        let mut size = decimal_num.pow(2);
+        let two: usize = 2;
+        let mut size = two.pow(decimal_num as u32);
 
         if size == 1 {
             size = 2;
         }
-
-        println!("----{}----", total);
-        for x in 0..size - 1 {
+        // println!("----{}----", total);
+        // println!("size - {}", size);
+        for x in 0..size {
             let binary = format!("{:0decimal_num$b}", x);
 
+            // println!("binary - {}", binary);
             let mut sum = values[0];
 
             let b_vec = binary.chars();
@@ -51,15 +53,16 @@ fn main() {
             }
 
             if total == sum {
-                count += 1;
-                println!("::::{}", sum);
-            }else{
-
-                println!("{}", sum);
+                // count += 1;
+                count += sum;
+                break;
+                // println!("::::{}", sum);
+            } else {
+                // println!("{}", sum);
             }
         }
 
         println!("");
-        println!("{}", count);
     }
+    println!("{}", count);
 }
