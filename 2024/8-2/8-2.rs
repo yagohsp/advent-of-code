@@ -5,7 +5,7 @@ fn print_all(map: &Vec<Vec<char>>) {
     for row in map.iter() {
         for c in row.iter() {
             print!("{}", c);
-            if *c == '#' {
+            if *c != '.' {
                 count += 1;
             }
         }
@@ -14,17 +14,27 @@ fn print_all(map: &Vec<Vec<char>>) {
     println!("{}", count);
 }
 
-fn get_points(t1: (isize, isize), t2: (isize, isize)) -> ((isize, isize), (isize, isize)) {
+fn set_points(t1: (isize, isize), t2: (isize, isize), map: &mut Vec<Vec<char>>) {
     let (t1_x, t1_y) = t1;
     let (t2_x, t2_y) = t2;
 
     let delta_x = t2_x - t1_x;
     let delta_y = t2_y - t1_y;
 
-    let a = (t1_x - delta_x, t1_y - delta_y);
-    let b = (t2_x + delta_x, t2_y + delta_y);
+    let mut point = (t1_x + delta_x, t1_y + delta_y);
 
-    (a, b)
+    if in_bounds(point, map.len() - 1) && point != t1 && point != t2 {
+        map[point.0 as usize][point.1 as usize] = '#';
+    }
+
+    loop {
+        point = (point.0 + delta_x, point.1 + delta_y);
+        if in_bounds(point, map.len() - 1) && point != t1 && point != t2 {
+            map[point.0 as usize][point.1 as usize] = '#';
+        } else {
+            break;
+        }
+    }
 }
 
 fn in_bounds(point: (isize, isize), max_len: usize) -> bool {
@@ -32,11 +42,10 @@ fn in_bounds(point: (isize, isize), max_len: usize) -> bool {
 }
 
 fn main() {
-    let file = fs::read_to_string("8-1/input.txt").expect("");
+    let file = fs::read_to_string("8-2/input-meu.txt").expect("");
     let lines = file.lines();
 
     let mut map: Vec<Vec<char>> = lines.map(|line| line.chars().collect()).collect();
-    let max_len = map.len() - 1;
 
     let mut towers: HashMap<char, Vec<(usize, usize)>> = HashMap::new();
 
@@ -51,8 +60,6 @@ fn main() {
         }
     }
 
-    let mut tested: Vec<((isize, isize), (isize, isize))> = Vec::new();
-
     for (_, locations) in towers.iter() {
         for a in locations.iter() {
             for b in locations.iter() {
@@ -62,20 +69,8 @@ fn main() {
                 let t2 = b;
                 let t2 = (t2.0 as isize, t2.1 as isize);
 
-                if tested.contains(&(t1, t2)) {
-                    continue;
-                }
-
-                let (a, b) = get_points(t1, t2);
-
-                if in_bounds(a, max_len) && a != t1 && a != t2 {
-                    map[a.0 as usize][a.1 as usize] = '#';
-                }
-                if in_bounds(b, max_len) && b != t1 && b != t2 {
-                    map[b.0 as usize][b.1 as usize] = '#';
-                }
-
-                tested.push((a, b));
+                println!("{:?} {:?}", t1, t2);
+                set_points(t1, t2, &mut map);
             }
         }
     }
