@@ -7,75 +7,75 @@ edition = "2021"
 
 [[bin]]
 name = "1-1"
-path = "1/1.rs"
+path = "01/1.rs"
 
 [[bin]]
 name = "1-2"
-path = "1/2.rs"
+path = "01/2.rs"
 
 [[bin]]
 name = "2-1"
-path = "2/1.rs"
+path = "02/1.rs"
 
 [[bin]]
 name = "2-2"
-path = "2/2.rs"
+path = "02/2.rs"
 
 [[bin]]
 name = "3-1"
-path = "3/1.rs"
+path = "03/1.rs"
 
 [[bin]]
 name = "3-2"
-path = "3/2.rs"
+path = "03/2.rs"
 
 [[bin]]
 name = "4-1"
-path = "4/1.rs"
+path = "04/1.rs"
 
 [[bin]]
 name = "4-2"
-path = "4/2.rs"
+path = "04/2.rs"
 
 [[bin]]
 name = "5-1"
-path = "5/1.rs"
+path = "05/1.rs"
 
 [[bin]]
 name = "5-2"
-path = "5/2.rs"
+path = "05/2.rs"
 
 [[bin]]
 name = "6-1"
-path = "6/1.rs"
+path = "06/1.rs"
 
 [[bin]]
 name = "6-2"
-path = "6/2.rs"
+path = "06/2.rs"
 
 [[bin]]
 name = "7-1"
-path = "7/1.rs"
+path = "07/1.rs"
 
 [[bin]]
 name = "7-2"
-path = "7/2.rs"
+path = "07/2.rs"
 
 [[bin]]
 name = "8-1"
-path = "8/1.rs"
+path = "08/1.rs"
 
 [[bin]]
 name = "8-2"
-path = "8/2.rs"
+path = "08/2.rs"
 
 [[bin]]
 name = "9-1"
-path = "9/1.rs"
+path = "09/1.rs"
 
 [[bin]]
 name = "9-2"
-path = "9/2.rs"
+path = "09/2.rs"
 
 [[bin]]
 name = "10-1"
