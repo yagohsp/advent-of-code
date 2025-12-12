@@ -2,7 +2,6 @@
 
 # puzzle_file="./puzzle.txt"
 puzzle_file="./example.txt"
-# puzzle_file="./dev.txt"
 
 
 count=0

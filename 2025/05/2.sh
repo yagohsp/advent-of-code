@@ -1,5 +1,6 @@
+#!/bin/bash
+
 # puzzle_file="./example.txt"
-# puzzle_file="./dev.txt"
 puzzle_file="./puzzle.txt"
 
 ranges=()

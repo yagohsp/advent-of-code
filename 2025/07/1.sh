@@ -1,6 +1,7 @@
+#!/bin/bash
+
 puzzle_file="./puzzle.txt"
 # puzzle_file="./example.txt"
-# puzzle_file="./dev.txt"
 
 readarray -t lines < $puzzle_file
 

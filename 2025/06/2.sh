@@ -1,3 +1,5 @@
+#!/bin/bash
+
 puzzle_file="./puzzle.txt"
 # puzzle_file="./example.txt"
 

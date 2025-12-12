@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# file="./example.txt"
 file="./puzzle.txt"
 puzzle=$(<$file)
 

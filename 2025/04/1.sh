@@ -1,7 +1,6 @@
 #!/bin/bash
 
 puzzle_file="./puzzle.txt"
-# puzzle_file="./dev.txt"
 # puzzle_file="./example.txt"
 
 mapfile -t lines < $puzzle_file
