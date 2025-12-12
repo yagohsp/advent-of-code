@@ -21,7 +21,7 @@ for ((i = 0; i < ${#lines[@]}; i++)); do
     done
 done
 
-mapfile -t sorted_distances < <(printf '%s\n' "${distances[@]}" | sort -n | head -n 1000)
+mapfile -t sorted_distances < <(printf '%s\n' "${distances[@]}" | sort -n)
 
 counts=()
 circuits=()
@@ -99,7 +99,7 @@ for distance in "${sorted_distances[@]}"; do
                 continue
             fi
 
-            circuits[$circuit_index]=""
+            circuits=("${circuits[@]:0:$circuit_index}" "${circuits[@]:$circuit_index+1}")
         done
 
         main_circuit_index=${added_to[0]}
@@ -107,26 +107,17 @@ for distance in "${sorted_distances[@]}"; do
 
         out=$(printf "%s\n" ${main_circuit//-/ } | sort -u | paste -sd-)
         circuits[$main_circuit_index]="$out"
+
     fi
 
-    # echo "----"
+    if (( ${#circuits[@]} == 1)); then
+        IFS='-' read -a ns <<< "${circuits[0]}"
+        if (( ${#ns[@]} == ${#lines[@]} )); then
+            x_a=${xs[$a]}
+            x_b=${xs[$b]}
+
+            echo $(( x_a * x_b))
+            break
+        fi
+    fi
 done
-
-# echo "${circuits[@]}"
-
-count=()
-for circuit in "${circuits[@]}"
-do
-    IFS='-' read -a nums <<< "$circuit"
-
-    count+=("${#nums[@]}")
-done
-
-biggests=($(printf "%s\n" "${count[@]}" | sort -u -nr | head -3))
-
-result=1
-for n in "${biggests[@]}"; do
-    result=$((result * n))
-done
-
-echo "$result"
