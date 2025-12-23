@@ -1,140 +1,131 @@
 #!/bin/bash
 
+index_of() {
+    local value=$1; shift
+    local arr=("$@")
+    for ((i=0; i<${#arr[@]}; i++)); do
+        [[ ${arr[i]} == "$value" ]] && { echo "$i"; return; }
+    done
+}
+
+print_grid(){
+    for (( cx = 0; cx < x_len; cx++ )); do
+        str=""
+        for (( cy = 0; cy < y_len; cy++ )); do
+            str+="${grid["$cx,$cy"]}"
+        done
+
+        echo "$str"
+    done
+    echo ""
+}
+
 puzzle_file="./example.txt"
 # puzzle_file="./puzzle.txt"
 
 readarray -t lines < $puzzle_file
 
-max=0
+xs=()
+ys=()
+declare -A x_sizes
+declare -A y_sizes
+declare -A grid
 
-lines+=("${lines[0]}")
+for line in ${lines[@]}; do
+    IFS=',' read -r x y <<< "$line"
 
-declare -A map
-
-max_x=0
-max_y=0
-
-function print_map(){
-    for ((x = 0; x <= max_x + 1; x++)); do
-        str=""
-        for ((y = 0; y <= max_y + 1; y++)); do
-
-            c=${map[$x,$y]}
-            if [[  $c == "#" ]]; then
-                str+="#"
-            elif [[ $c == "O" ]]; then
-                str+="O"
-            else
-                str+="."
-            fi
-        done
-        echo $str
-    done
-}
-
-for ((i = 0; i < ${#lines[@]} - 1; i++)); do
-    range_i=${lines[$i]}
-    IFS=',' read -ra range <<< "$range_i"
-
-    y=${range[0]}
-    x=${range[1]}
-
-    if (( y > max_y ));then
-        max_y=$y
-    fi
-
-    if (( x > max_x ));then
-        max_x=$x
-    fi
-
-    map[$x,$y]="O"
-
-    range_next_i=${lines[$i + 1]}
-    IFS=',' read -ra range_next <<< "$range_next_i"
-
-    y_next=${range_next[0]}
-    x_next=${range_next[1]}
-
-    if (( x == x_next));then
-        # echo "move through y - $range_i $range_next_i"
-
-        start=$y
-        end=$y_next
-        if (( y > y_next ));then
-            start=$y_next
-            end=$y
-        fi
-
-        for ((pos_y = $start+1; pos_y < end; pos_y++)); do
-            map[$x,$pos_y]="#"
-        done
-    else
-        # echo "move through x - $range_i $range_next_i"
-
-        start=$x
-        end=$x_next
-        if (( x > x_next ));then
-            start=$x_next
-            end=$x
-        fi
-
-        for ((pos_x = $start+1; pos_x < end; pos_x++)); do
-            map[$pos_x,$y]="#"
-        done
-    fi
+    ys+=("$y")
+    xs+=("$x")
 done
 
-print_map
+ys=($(printf "%s\n" "${ys[@]}" | sort -nu))
+xs=($(printf "%s\n" "${xs[@]}" | sort -nu))
 
-for ((x = 0; x <= max_x + 1; x++)); do
-    inside=0
-    printing=0
-    for ((y = 0; y <= max_y + 1; y++)); do
+for ((i = 1; i < ${#xs[@]}; i++)); do
+    x1=${xs[$i - 1]}
+    x2=${xs[$i]}
+    size=$(( x2 - x1 - 1))
 
-        c=${map[$x,$y]}
+    abs_size=$(( size < 0 ? -size : size ))
 
-        if (( inside == 1 )); then
-            if [[ $c == "O" ]]; then
-                inside=0
-                printing=0
-            elif [[ $c == "#" && $printing -eq 1 ]]; then
-                printing=0
-                inside=0
-            elif [[ $c == "" || $printing -eq 1 ]]; then
-                map[$x,$y]="#"
-                printing=1
-            fi
-        else
-            if [[ $c == "#" || $c == "O" ]]; then
-                inside=1
-            fi
-        fi
+    index=$(( i * 2 + 1 ))
 
+    x_sizes[$index]="$abs_size"
+done
+
+for ((i = 1; i < ${#ys[@]}; i++)); do
+    y1=${ys[$i - 1]}
+    y2=${ys[$i]}
+    size=$(( y2 - y1 - 1))
+
+    abs_size=$(( size < 0 ? -size : size ))
+
+    index=$(( i * 2 + 1 ))
+
+    y_sizes[$index]="$abs_size"
+done
+
+loop_lines=("${lines[@]}" "${lines[0]}")
+
+x_len=$(( ${#xs[@]} * 2 - 1 ))
+y_len=$(( ${#ys[@]} * 2 - 1 ))
+
+for ((cx=0; cx<x_len; cx++)); do
+    for ((cy=0; cy<y_len; cy++)); do
+        grid["$cx,$cy"]=0
     done
 done
 
 
-print_map
+for (( i = 0; i < ${#loop_lines[@]} - 1; i++ )) do
+    IFS=',' read -r x1 y1 <<< "${loop_lines[$i]}"
+    IFS=',' read -r x2 y2 <<< "${loop_lines[$i + 1]}"
+
+    ix1=$(index_of "$x1" "${xs[@]}")
+    ix2=$(index_of "$x2" "${xs[@]}")
+    iy1=$(index_of "$y1" "${ys[@]}")
+    iy2=$(index_of "$y2" "${ys[@]}")
+
+    cx1=$(( ix1 * 2 ))
+    cx2=$(( ix2 * 2 ))
+    cy1=$(( iy1 * 2 ))
+    cy2=$(( iy2 * 2 ))
+
+    (( cx1 > cx2 )) && { t=$cx1; cx1=$cx2; cx2=$t; }
+    (( cy1 > cy2 )) && { t=$cy1; cy1=$cy2; cy2=$t; }
 
 
-# max=0
-# for ((i = 0; i < ${#lines[@]} - 2; i++)); do
-#     range_i=${lines[$i]}
-#     IFS=',' read -ra range <<< "$range_i"
-#
-#     y=${range[0]}
-#     x=${range[1]}
-#
-#     current_x=$x
-#
-#     while (( current_x <= max_x )); do
-#         # echo "$range_i"
-#
-#         if [[ ${map[$x,$y]} == "O" || ${map[$x,$y]} == "#" ]]; then
-#             # echo "at $current_x $y"
-#             :
-#         fi
-#         (( current_x++ ))
-#     done
-#     # echo "-----"
-# done
+    for ((cx = cx1; cx <= cx2; cx++)); do
+        for ((cy = cy1; cy <= cy2; cy++)); do
+            grid["$cx,$cy"]=1
+        done
+    done
+done
+
+declare -A outside
+outside["-1,-1"]=1
+queue=("-1,-1")
+
+while (( ${#queue[@]} > 0 )); do
+    IFS=',' read -r qx qy <<< "${queue[0]}"
+    queue=("${queue[@]:1}")
+
+    around=("$(( qx + 1)),$qy" "$(( qx - 1)),$qy" "$qx,$(( qy + 1))" "$qx,$(( qy - 1))")
+
+    for side in ${around[@]}; do
+        IFS=',' read -r sx sy <<< "$side"
+
+        (( sx < -1 || sy < -1 || sx > x_len || sy > y_len )) && continue;
+        (( grid["$sx,$sy"] == 1 )) &&  continue;
+        (( outside["$sx,$sy"] == 1 )) && continue;
+
+        outside["$sx,$sy"]=1
+        queue+=("$sx,$sy")
+    done
+done
+
+for (( x=0; x < x_len; x++ )); do
+    for (( y=0; y < y_len; y++ )); do
+        (( outside["$x,$y"] != 1 )) && grid["$x,$y"]=1
+    done
+done
