@@ -4,55 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
-	"unicode"
+	"strings"
 )
 
-func getNumber(grid [][]rune, x int, y int) (int, int) {
-	max_y, max_x := len(grid), len(grid[0])
-	start_x := x
-
-	number_str := ""
-
-	for {
-		if x == max_x {
-			break
-		}
-
-		char := grid[y][x]
-		if !unicode.IsDigit(char) {
-			break
-		}
-
-		number_str += string(char)
-		x++
-	}
-
-	end_x := x - 1
-
-	for i_y := y - 1; i_y <= y+1; i_y++ {
-		if i_y < 0 || i_y >= max_y {
-			continue
-		}
-
-		for i_x := start_x - 1; i_x <= end_x+1; i_x++ {
-			if i_x < 0 || i_x >= max_x {
-				continue
-			}
-
-			if i_y == y && i_x >= start_x && i_x <= end_x {
-				continue
-			}
-
-			char := grid[i_y][i_x]
-			if !unicode.IsDigit(char) && char != '.' {
-				number, _ := strconv.Atoi(number_str)
-				return number, len(number_str)
-			}
-		}
-	}
-
-	return 0, 0
+func split(s, sep string) (string, string) {
+	x := strings.Split(s, sep)
+	return x[0], x[1]
 }
 
 func main() {
@@ -61,28 +18,37 @@ func main() {
 
 	scanner := bufio.NewScanner(file)
 
-	var grid [][]rune
+	total := 0
+
 	for scanner.Scan() {
 		line := scanner.Text()
-		row := []rune(line)
-		grid = append(grid, row)
-	}
 
-	sum := 0
-	max_x := len(grid[0])
+		_, all_numbers := split(line, ": ")
+		all_numbers = strings.ReplaceAll(all_numbers, "  ", " ")
+		winners_str, numbers_str := split(all_numbers, " | ")
 
-	for y, line := range grid {
-		for x := 0; x < max_x; x++ {
-			if unicode.IsDigit(line[x]) {
-				number, len := getNumber(grid, x, y)
+		winners := strings.Split(winners_str, " ")
+		numbers := strings.Split(numbers_str, " ")
 
-				if len > 0 {
-					sum += number
-					x += len
+		numbers_set := make(map[string]struct{})
+		for _, x := range numbers {
+			numbers_set[x] = struct{}{}
+		}
+
+		points := 0
+
+		for _, x := range winners {
+			if _, exists := numbers_set[x]; exists {
+				if points == 0 {
+					points = 1
+				} else {
+					points *= 2
 				}
 			}
 		}
+
+		total += points
 	}
 
-	fmt.Println(sum)
+	fmt.Println("total", total)
 }
